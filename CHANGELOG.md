@@ -16,6 +16,7 @@ We manage release notes in this file instead of the paginated Github Releases Pa
   <summary>Table of Contents</summary>
 
 - [React Router Releases](#react-router-releases)
+  - [v8.5.2](#v852)
   - [v8.5.1](#v851)
     - [`<Await unstable_promise>`](#await-unstable_promise)
   - [v8.5.0](#v850)
@@ -121,6 +122,74 @@ We manage release notes in this file instead of the paginated Github Releases Pa
   - [v7.0.0](#v700)
 
 </details>
+
+## v8.5.2
+
+Date: 2026-11-17
+
+### Patch Changes
+
+- `react-router` - Keep loader `dataStrategy` navigation types and loading navigation history actions in sync with the committed history action after a submission action throws an error. ([#15621](https://github.com/remix-run/react-router/pull/15621))
+
+- `react-router` - Cancel the discarded response body for `HEAD` requests, so a resource route streaming a file no longer leaks its file descriptor ([#15634](https://github.com/remix-run/react-router/pull/15634))
+  - Keep observing nested deferred promise rejections after cancelling a data response so they cannot crash the server
+
+- `react-router` - Preserve streamed `Suspense` boundaries during hydration in development by wrapping the critical CSS reset in `React.startTransition`. Previously, this update could cause React 19 to silently discard the server HTML and render the boundary on the client. ([#15382](https://github.com/remix-run/react-router/pull/15382))
+
+- `react-router` - Fix submissions to root form actions containing search parameters or a hash when a `basename` is configured ([#15725](https://github.com/remix-run/react-router/pull/15725))
+
+- `react-router` - Fix `href()` to throw for `null` required parameters and omit `null` splat parameters without a trailing slash, matching the behavior for `undefined` and the defined types ([#15754](https://github.com/remix-run/react-router/pull/15754))
+
+- `react-router` - Fix generated `MetaArgs.matches` types to stop at the current route instead of appending an unknown, possibly undefined tail. ([#15697](https://github.com/remix-run/react-router/pull/15697))
+
+- `react-router` - Stop `redirect()`, `redirectDocument()` and `replace()` from setting `status: 302` on the `ResponseInit` passed to them ([#15753](https://github.com/remix-run/react-router/pull/15753))
+  - Later responses created from the same init object no longer get status 302, and a frozen init no longer throws
+
+- `react-router` - Clear an `<Await>` render error when it receives a new `resolve` value, so the error element no longer stays on screen after navigating to a route whose data renders fine ([#15695](https://github.com/remix-run/react-router/pull/15695))
+
+- `react-router` - Run `clientMiddleware` during RSC client navigations and preserve it when route components update via HMR. ([#15763](https://github.com/remix-run/react-router/pull/15763))
+
+- `react-router` - Handle `HEAD` resource responses consistently in RSC Framework and RSC Data modes. ([#15783](https://github.com/remix-run/react-router/pull/15783))
+
+- `react-router` - RSC routes with a `clientLoader` now render correctly on the initial request when no `HydrateFallback` is provided. ([#15763](https://github.com/remix-run/react-router/pull/15763))
+
+- `react-router` - Fix `<ScrollRestoration>` throwing an uncaught error before hydration when `sessionStorage` is unavailable ([#15566](https://github.com/remix-run/react-router/pull/15566))
+  - The inline restore script already logged the storage error, but its cleanup call accessed `sessionStorage` again and threw (e.g. Chrome with "Block all cookies", sandboxed cross-origin iframes)
+  - The error is still logged with `console.error`; only the second, uncaught throw is removed
+
+- `react-router` - Fix `useBlocker` leaving behind a stale blocker that keeps blocking navigation after its component is hidden and shown again with `<Activity>`, or after the router is recreated ([#15710](https://github.com/remix-run/react-router/pull/15710))
+
+- `@react-router/architect` - Fix the request URL when the `Host` header is an IPv6 address (e.g., `[::1]:3333`), which made `new URL()` throw ([#15660](https://github.com/remix-run/react-router/pull/15660))
+
+- `@react-router/architect` - Fix `sendReactRouterResponse` throwing `TypeError: immutable` when a `fetch()` response sets cookies ([#15714](https://github.com/remix-run/react-router/pull/15714))
+
+- `@react-router/cloudflare` - Improve handling of invalid sessions in Workers KV session storage. ([#15772](https://github.com/remix-run/react-router/pull/15772))
+
+- `@react-router/dev` - Cache client route chunk analysis using normalized route paths and disable dependency optimization in the child compiler, including explicitly included dependencies ([#15329](https://github.com/remix-run/react-router/pull/15329))
+
+- `@react-router/dev` - Serialize concurrent type generation to prevent filesystem races between `react-router dev` and `react-router typegen`. Report a timeout with cleanup instructions if the typegen lock cannot be acquired within 30 seconds. ([#15293](https://github.com/remix-run/react-router/pull/15293))
+
+- `@react-router/dev` - Pass route component props (`loaderData`, `params`, etc.) to `default`, `ErrorBoundary`, and `HydrateFallback` exports declared with export specifiers, including re-exports (e.g., `export { default } from "./component"`) and local aliases (`export { Page as default }`) ([#15544](https://github.com/remix-run/react-router/pull/15544))
+
+- `@react-router/dev` - Declare an empty source map for the placeholder chunk of a route export that can't be split, so Rollup no longer warns that `react-router:split-route-modules` dropped the source map ([#15520](https://github.com/remix-run/react-router/pull/15520))
+
+- `@react-router/dev` - Preserve RSC client middleware when route components update via HMR. ([#15763](https://github.com/remix-run/react-router/pull/15763))
+
+- `@react-router/dev` - Fix RSC Framework Mode builds failing with "Vite RSC assets manifest not found" when using `@vitejs/plugin-rsc` 0.5.36 or later ([#15672](https://github.com/remix-run/react-router/pull/15672))
+
+  Preserve client version checks when the client build uses `write: false`.
+
+- `@react-router/dev` - Do not add `isbot` to dependencies in `ssr: false` mode. ([#15668](https://github.com/remix-run/react-router/pull/15668))
+
+- `@react-router/node` - Keep handling errors from a cancelled Node stream until it closes, so a `HEAD` request for a file that fails to open no longer crashes the process ([#15634](https://github.com/remix-run/react-router/pull/15634))
+
+- `@react-router/node` - Release the reader acquired by `readableStreamToString` when consumption finishes or fails, allowing callers to acquire a reader again afterward. ([#15592](https://github.com/remix-run/react-router/pull/15592))
+
+- `create-react-router` - Allow project scaffolding to complete when `git add` or the initial `git commit` fails ([#15737](https://github.com/remix-run/react-router/pull/15737))
+
+- `create-react-router` - Derive the generated package name from the project directory basename, including absolute paths, trailing separators, and paths entered at the directory prompt. ([#15698](https://github.com/remix-run/react-router/pull/15698))
+
+**Full Changelog**: [`v8.5.1...v8.5.2`](https://github.com/remix-run/react-router/compare/react-router@8.5.1...react-router@8.5.2)
 
 ## v8.5.1
 

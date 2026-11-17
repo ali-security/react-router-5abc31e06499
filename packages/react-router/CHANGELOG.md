@@ -1,5 +1,27 @@
 # `react-router`
 
+## v8.5.2
+
+### Patch Changes
+
+- Keep loader `dataStrategy` navigation types and loading navigation history actions in sync with the committed history action after a submission action throws an error. ([#15621](https://github.com/remix-run/react-router/pull/15621))
+- Cancel the discarded response body for `HEAD` requests, so a resource route streaming a file no longer leaks its file descriptor ([#15634](https://github.com/remix-run/react-router/pull/15634))
+  - Keep observing nested deferred promise rejections after cancelling a data response so they cannot crash the server
+- Preserve streamed `Suspense` boundaries during hydration in development by wrapping the critical CSS reset in `React.startTransition`. Previously, this update could cause React 19 to silently discard the server HTML and render the boundary on the client. ([#15382](https://github.com/remix-run/react-router/pull/15382))
+- Fix submissions to root form actions containing search parameters or a hash when a `basename` is configured ([#15725](https://github.com/remix-run/react-router/pull/15725))
+- Fix `href()` to throw for `null` required parameters and omit `null` splat parameters without a trailing slash, matching the behavior for `undefined` and the defined types ([#15754](https://github.com/remix-run/react-router/pull/15754))
+- Fix generated `MetaArgs.matches` types to stop at the current route instead of appending an unknown, possibly undefined tail. ([#15697](https://github.com/remix-run/react-router/pull/15697))
+- Stop `redirect()`, `redirectDocument()` and `replace()` from setting `status: 302` on the `ResponseInit` passed to them ([#15753](https://github.com/remix-run/react-router/pull/15753))
+  - Later responses created from the same init object no longer get status 302, and a frozen init no longer throws
+- Clear an `<Await>` render error when it receives a new `resolve` value, so the error element no longer stays on screen after navigating to a route whose data renders fine ([#15695](https://github.com/remix-run/react-router/pull/15695))
+- Run `clientMiddleware` during RSC client navigations and preserve it when route components update via HMR. ([#15763](https://github.com/remix-run/react-router/pull/15763))
+- Handle `HEAD` resource responses consistently in RSC Framework and RSC Data modes. ([#15783](https://github.com/remix-run/react-router/pull/15783))
+- RSC routes with a `clientLoader` now render correctly on the initial request when no `HydrateFallback` is provided. ([#15763](https://github.com/remix-run/react-router/pull/15763))
+- Fix `<ScrollRestoration>` throwing an uncaught error before hydration when `sessionStorage` is unavailable ([#15566](https://github.com/remix-run/react-router/pull/15566))
+  - The inline restore script already logged the storage error, but its cleanup call accessed `sessionStorage` again and threw (e.g. Chrome with "Block all cookies", sandboxed cross-origin iframes)
+  - The error is still logged with `console.error`; only the second, uncaught throw is removed
+- Fix `useBlocker` leaving behind a stale blocker that keeps blocking navigation after its component is hidden and shown again with `<Activity>`, or after the router is recreated ([#15710](https://github.com/remix-run/react-router/pull/15710))
+
 ## v8.5.1
 
 ### Patch Changes

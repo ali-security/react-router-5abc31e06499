@@ -1,5 +1,29 @@
 # `@react-router/dev`
 
+## v8.5.2
+
+### Patch Changes
+
+- Cache client route chunk analysis using normalized route paths and disable dependency optimization in the child compiler, including explicitly included dependencies ([#15329](https://github.com/remix-run/react-router/pull/15329))
+
+- Serialize concurrent type generation to prevent filesystem races between `react-router dev` and `react-router typegen`. Report a timeout with cleanup instructions if the typegen lock cannot be acquired within 30 seconds. ([#15293](https://github.com/remix-run/react-router/pull/15293))
+
+- Pass route component props (`loaderData`, `params`, etc.) to `default`, `ErrorBoundary`, and `HydrateFallback` exports declared with export specifiers, including re-exports (e.g., `export { default } from "./component"`) and local aliases (`export { Page as default }`) ([#15544](https://github.com/remix-run/react-router/pull/15544))
+
+- Declare an empty source map for the placeholder chunk of a route export that can't be split, so Rollup no longer warns that `react-router:split-route-modules` dropped the source map ([#15520](https://github.com/remix-run/react-router/pull/15520))
+
+- Preserve RSC client middleware when route components update via HMR. ([#15763](https://github.com/remix-run/react-router/pull/15763))
+
+- Fix RSC Framework Mode builds failing with "Vite RSC assets manifest not found" when using `@vitejs/plugin-rsc` 0.5.36 or later ([#15672](https://github.com/remix-run/react-router/pull/15672))
+
+  Preserve client version checks when the client build uses `write: false`.
+
+- Do not add `isbot` to dependencies in `ssr: false` mode. ([#15668](https://github.com/remix-run/react-router/pull/15668))
+- Updated dependencies:
+  - [`react-router@8.5.2`](https://github.com/remix-run/react-router/releases/tag/react-router@8.5.2)
+  - [`@react-router/node@8.5.2`](https://github.com/remix-run/react-router/releases/tag/@react-router/node@8.5.2)
+  - [`@react-router/serve@8.5.2`](https://github.com/remix-run/react-router/releases/tag/@react-router/serve@8.5.2)
+
 ## v8.5.1
 
 ### Patch Changes
