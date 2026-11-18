@@ -407,7 +407,9 @@ function encodeLocation(to: To): Path {
   };
 }
 
-const ABSOLUTE_URL_REGEX = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
+// Browsers treat backslashes as forward slashes in URLs, so any combination of
+// two leading slashes/backslashes (`//`, `\\`, `/\`, `\/`) is protocol-relative
+const ABSOLUTE_URL_REGEX = /^(?:[a-z][a-z0-9+.-]*:|[\\/]{2})/i;
 
 // This utility is based on https://github.com/zertosh/htmlescape
 // License: https://github.com/zertosh/htmlescape/blob/0527ca7156a524d256101bb310a9f970f63078ad/LICENSE

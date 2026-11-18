@@ -25,6 +25,60 @@ describe("resolvePath", () => {
     });
   });
 
+  it("normalizes mixed leading separators", () => {
+    expect(resolvePath("//foo")).toMatchObject({
+      pathname: "/foo",
+    });
+
+    expect(resolvePath("\\\\foo")).toMatchObject({
+      pathname: "/foo",
+    });
+
+    expect(resolvePath("/\\foo")).toMatchObject({
+      pathname: "/foo",
+    });
+
+    expect(resolvePath("\\/foo")).toMatchObject({
+      pathname: "/foo",
+    });
+  });
+
+  it("does not produce protocol-relative pathnames from mixed separators", () => {
+    expect(resolvePath("\\\\google.com/path?q=query#hash")).toEqual({
+      pathname: "/google.com/path",
+      search: "?q=query",
+      hash: "#hash",
+    });
+
+    expect(resolvePath("/\\google.com", "/inbox")).toMatchObject({
+      pathname: "/google.com",
+    });
+
+    expect(resolvePath("\\/google.com", "/inbox")).toMatchObject({
+      pathname: "/google.com",
+    });
+
+    expect(resolvePath("\\\\google.com", "/inbox")).toMatchObject({
+      pathname: "/google.com",
+    });
+
+    expect(resolvePath({ pathname: "/\\google.com" })).toMatchObject({
+      pathname: "/google.com",
+    });
+
+    expect(resolvePath("search/../..\\/google.com", "/inbox")).toMatchObject({
+      pathname: "/google.com",
+    });
+
+    expect(resolvePath("../\\google.com", "/inbox")).toMatchObject({
+      pathname: "/google.com",
+    });
+
+    expect(resolvePath("\\google.com", "/")).toMatchObject({
+      pathname: "/google.com",
+    });
+  });
+
   it('ignores trailing slashes on the "from" pathname when resolving relative paths', () => {
     expect(resolvePath("../search", "/inbox/")).toMatchObject({
       pathname: "/search",

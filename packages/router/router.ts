@@ -39,7 +39,9 @@ import type {
   DataWithResponseInit,
 } from "./utils";
 import {
+  ABSOLUTE_URL_REGEX,
   ErrorResponseImpl,
+  PROTOCOL_RELATIVE_URL_REGEX,
   ResultType,
   convertRouteMatchToUiMatch,
   convertRoutesToDataRoutes,
@@ -50,6 +52,7 @@ import {
   joinPaths,
   matchRoutes,
   matchRoutesImpl,
+  normalizeProtocolRelativeUrl,
   resolveTo,
   stripBasename,
 } from "./utils";
@@ -738,8 +741,6 @@ export const IDLE_BLOCKER: BlockerUnblocked = {
   reset: undefined,
   location: undefined,
 };
-
-const ABSOLUTE_URL_REGEX = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
 
 const defaultMapRouteProperties: MapRoutePropertiesFunction = (route) => ({
   hasErrorBoundary: Boolean(route.hasErrorBoundary),
@@ -5159,8 +5160,10 @@ function normalizeRedirectLocation(
   if (ABSOLUTE_URL_REGEX.test(location)) {
     // Strip off the protocol+origin for same-origin + same-basename absolute redirects
     let normalizedLocation = location;
-    let url = normalizedLocation.startsWith("//")
-      ? new URL(currentUrl.protocol + normalizedLocation)
+    let url = PROTOCOL_RELATIVE_URL_REGEX.test(normalizedLocation)
+      ? new URL(
+          normalizeProtocolRelativeUrl(normalizedLocation, currentUrl.protocol)
+        )
       : new URL(normalizedLocation);
     let isSameBasename = stripBasename(url.pathname, basename) != null;
     if (url.origin === currentUrl.origin && isSameBasename) {

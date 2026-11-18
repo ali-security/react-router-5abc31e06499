@@ -951,7 +951,10 @@ const isBrowser =
   typeof window.document !== "undefined" &&
   typeof window.document.createElement !== "undefined";
 
-const ABSOLUTE_URL_REGEX = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
+// Browsers treat backslashes as forward slashes in URLs, so any combination of
+// two leading slashes/backslashes (`//`, `\\`, `/\`, `\/`) is protocol-relative
+const ABSOLUTE_URL_REGEX = /^(?:[a-z][a-z0-9+.-]*:|[\\/]{2})/i;
+const PROTOCOL_RELATIVE_URL_REGEX = /^[\\/]{2}/;
 
 /**
  * The public API for rendering a history-aware `<a>`.
@@ -986,8 +989,8 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
       if (isBrowser) {
         try {
           let currentUrl = new URL(window.location.href);
-          let targetUrl = to.startsWith("//")
-            ? new URL(currentUrl.protocol + to)
+          let targetUrl = PROTOCOL_RELATIVE_URL_REGEX.test(to)
+            ? new URL(currentUrl.protocol + to.replace(/\\/g, "/"))
             : new URL(to);
           let path = stripBasename(targetUrl.pathname, basename);
 
